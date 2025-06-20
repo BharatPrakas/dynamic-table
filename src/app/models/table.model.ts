@@ -1,6 +1,7 @@
 export interface TableProperties {
   tableStyle: 'default' | 'striped' | 'bordered' | 'hover';
   hovered: boolean;
+  search?: boolean;
 }
 export interface ActionConfig {
   name: string;

@@ -1,5 +1,6 @@
 <div class="container py-5">
   <!-- search box -->
+  @if (tableProperties.search) {
   <div class="input-group mb-3">
     <span class="input-group-text" id="basic-addon1">
       <i class="bi bi-search text-secondary"></i>
@@ -11,9 +12,11 @@
       }
     </span>
   </div>
+  }
   <!-- table -->
   <div class="table-responsive shadow-sm rounded-3 overflow-auto noselect">
-    <table class="table align-middle mb-0" [class.table-hover]="tableProperties .hovered" [ngClass]="getTableStyle(tableProperties.tableStyle)">
+    <table class="table align-middle mb-0" [class.table-hover]="tableProperties.hovered"
+      [ngClass]="getTableStyle(tableProperties.tableStyle)">
       <thead class="text-white">
         <tr class="table-active">
           @for (row of columns; track $index) {
@@ -31,92 +34,93 @@
         </tr>
       </thead>
       <tbody>
+        @if(tableData && tableData.length > 0) {
         @for (data of tableData; track data; let i = $index) {
         <tr class="bg-white border-bottom">
           @for (row of columns; track $index) {
           @switch (row.type) {
           @case ('badge') {
           <td class="p-3" [ngClass]="{
-            'fw-bold': row.style?.fontStyle === 'bold',
-            'text-secondary' : row.style?.fontStyle === 'muted',
-            'text-start' : row.style?.align === 'start',
-            'text-center' : row.style?.align === 'center',
-            'text-end' : row.style?.align === 'end'
-            }">
+                                    'fw-bold': row.style?.fontStyle === 'bold',
+                                    'text-secondary' : row.style?.fontStyle === 'muted',
+                                    'text-start' : row.style?.align === 'start',
+                                    'text-center' : row.style?.align === 'center',
+                                    'text-end' : row.style?.align === 'end'
+                                    }">
             <span class="badge px-3 py-2" [ngClass]="{
-                'success-fill': data.status === 'Active' && row.properties?.background === 'fill',
-                'warning-fill': data.status === 'Pending' && row.properties?.background === 'fill',
-                'danger-fill': data.status === 'Inactive' && row.properties?.background === 'fill',
-                'success-outline': data.status === 'Active' && row.properties?.background === 'outline',
-                'warning-outline': data.status === 'Pending' && row.properties?.background === 'outline',
-                'danger-outline': data.status === 'Inactive' && row.properties?.background === 'outline',
-                'rounded-pill': row?.properties?.shape === 'oval',
-                }">
+                                        'success-fill': data.status === 'Active' && row.properties?.background === 'fill',
+                                        'warning-fill': data.status === 'Pending' && row.properties?.background === 'fill',
+                                        'danger-fill': data.status === 'Inactive' && row.properties?.background === 'fill',
+                                        'success-outline': data.status === 'Active' && row.properties?.background === 'outline',
+                                        'warning-outline': data.status === 'Pending' && row.properties?.background === 'outline',
+                                        'danger-outline': data.status === 'Inactive' && row.properties?.background === 'outline',
+                                        'rounded-pill': row?.properties?.shape === 'oval',
+                                        }">
               {{ data.status }}
             </span>
           </td>
           }
           @case ('text') {
           <td class="p-3" [ngStyle]="{'width':row.style?.width || 'none'}" [ngClass]="{
-            'fw-bold': row.style?.fontStyle === 'bold',
-            'text-secondary' : row.style?.fontStyle === 'muted',
-            'text-start' : row.style?.align === 'start',
-            'text-center' : row.style?.align === 'center',
-            'text-end' : row.style?.align === 'end'
-            }">
+                                    'fw-bold': row.style?.fontStyle === 'bold',
+                                    'text-secondary' : row.style?.fontStyle === 'muted',
+                                    'text-start' : row.style?.align === 'start',
+                                    'text-center' : row.style?.align === 'center',
+                                    'text-end' : row.style?.align === 'end'
+                                    }">
             {{ data[row.key] || '-' }}
           </td>
           }
           @case ('number') {
           <td class="p-3" [ngClass]="{
-            'fw-bold': row.style?.fontStyle === 'bold',
-            'text-secondary' : row.style?.fontStyle === 'muted',
-            'text-start' : row.style?.align === 'start',
-            'text-center' : row.style?.align === 'center',
-            'text-end' : row.style?.align === 'end'
-            }">{{ data[row.key] || 0}}</td>
+                                    'fw-bold': row.style?.fontStyle === 'bold',
+                                    'text-secondary' : row.style?.fontStyle === 'muted',
+                                    'text-start' : row.style?.align === 'start',
+                                    'text-center' : row.style?.align === 'center',
+                                    'text-end' : row.style?.align === 'end'
+                                    }">{{ data[row.key] || 0}}</td>
           }
           @case ('date') {
           <td class="p-3" [ngClass]="{
-            'fw-bold': row.style?.fontStyle === 'bold',
-            'text-secondary' : row.style?.fontStyle === 'muted',
-            'text-start' : row.style?.align === 'start',
-            'text-center' : row.style?.align === 'center',
-            'text-end' : row.style?.align === 'end'
-            }">{{ data[row.key] | date:'MMM dd, YYYY' }}</td>
+                                    'fw-bold': row.style?.fontStyle === 'bold',
+                                    'text-secondary' : row.style?.fontStyle === 'muted',
+                                    'text-start' : row.style?.align === 'start',
+                                    'text-center' : row.style?.align === 'center',
+                                    'text-end' : row.style?.align === 'end'
+                                    }">{{ data[row.key] | date:'MMM dd, YYYY' }}</td>
           }
           @case ('amount') {
           <td class="p-3" [ngClass]="{
-            'fw-bold': row.style?.fontStyle === 'bold',
-            'text-secondary' : row.style?.fontStyle === 'muted',
-            'text-start' : row.style?.align === 'start',
-            'text-center' : row.style?.align === 'center',
-            'text-end' : row.style?.align === 'end'
-            }">{{ data[row.key] | currency:'INR':'symbol':'1.2'}}</td>
+                                    'fw-bold': row.style?.fontStyle === 'bold',
+                                    'text-secondary' : row.style?.fontStyle === 'muted',
+                                    'text-start' : row.style?.align === 'start',
+                                    'text-center' : row.style?.align === 'center',
+                                    'text-end' : row.style?.align === 'end'
+                                    }">{{ data[row.key] | currency:'INR':'symbol':'1.2'}}</td>
           }
           @case('image') {
           <td class="p-3" [ngClass]="{
-            'fw-bold': row.style?.fontStyle === 'bold',
-            'text-secondary' : row.style?.fontStyle === 'muted',
-            'text-start' : row.style?.align === 'start',
-            'text-center' : row.style?.align === 'center',
-            'text-end' : row.style?.align === 'end'
-            }">
+                                    'fw-bold': row.style?.fontStyle === 'bold',
+                                    'text-secondary' : row.style?.fontStyle === 'muted',
+                                    'text-start' : row.style?.align === 'start',
+                                    'text-center' : row.style?.align === 'center',
+                                    'text-end' : row.style?.align === 'end'
+                                    }">
             <img [src]="data[row.key]" [ngClass]="{
-                  'rounded-circle': row.shape === 'circle',
-                  'rounded': row.shape === 'square'
-                }" width="40" height="40" />
+                                          'rounded-circle': row.shape === 'circle',
+                                          'rounded': row.shape === 'square'
+                                        }" width="40" height="40" />
           </td>
           }
           @case('profile') {
           <td>
             <div class="p-3 d-flex align-items-center gap-2" [ngClass]="{
-              'fw-bold': row.style?.fontStyle === 'bold',
-              'text-secondary' : row.style?.fontStyle === 'muted',
-              'text-start' : row.style?.align === 'start',
-              'text-center' : row.style?.align === 'center',
-              'text-end' : row.style?.align === 'end'
-              }">
+                                      'fw-bold': row.style?.fontStyle === 'bold',
+                                      'text-secondary' : row.style?.fontStyle === 'muted',
+                                      'text-start' : row.style?.align === 'start',
+                                      'text-center' : row.style?.align === 'center',
+                                      'text-end' : row.style?.align === 'end'
+                                      }">
               <img [src]="data.profilePic" class="rounded-circle" width="40" height="40" />
               <span>{{ data[row.key] }}</span>
             </div>
@@ -143,12 +147,12 @@
             <div class="position-relative d-inline-block" style="width: 40px; height: 40px;">
               <svg class="position-absolute top-0 start-0" viewBox="0 0 36 36" style="width: 100%; height: 100%;">
                 <path class="text-light" d="M18 2.0845
-                                a 15.9155 15.9155 0 0 1 0 31.831
-                                a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor"
-                  stroke-width="3" />
+                                                        a 15.9155 15.9155 0 0 1 0 31.831
+                                                        a 15.9155 15.9155 0 0 1 0 -31.831" fill="none"
+                  stroke="currentColor" stroke-width="3" />
                 <path class="text-primary" [attr.stroke-dasharray]="data[row.key] + ', 100'" d="M18 2.0845
-                                a 15.9155 15.9155 0 0 1 0 31.831
-                                a 15.9155 15.9155 0 0 1 0 -31.831" fill="none"
+                                                        a 15.9155 15.9155 0 0 1 0 31.831
+                                                        a 15.9155 15.9155 0 0 1 0 -31.831" fill="none"
                   [attr.stroke]="row.properties?.background || 'currentColor'" stroke-width="3"
                   stroke-linecap="round" />
               </svg>
@@ -168,12 +172,12 @@
             <div class="d-flex gap-2">
               @for (action of actions; track $index) {
               <div [ngClass]="{
-                'icon-container' : row?.properties?.shape !== 'default',
-                'rounded-fill-icon': row?.properties?.shape === 'circle' && row.properties?.background === 'fill',
-                'rounded-outline-icon': row?.properties?.shape === 'circle' && row.properties?.background === 'outline',
-                'square-fill-icon': row?.properties?.shape === 'square' && row.properties?.background === 'fill',
-                'square-outline-icon': row?.properties?.shape === 'square' && row.properties?.background === 'outline',
-                }">
+                                        'icon-container' : row?.properties?.shape !== 'default',
+                                        'rounded-fill-icon': row?.properties?.shape === 'circle' && row.properties?.background === 'fill',
+                                        'rounded-outline-icon': row?.properties?.shape === 'circle' && row.properties?.background === 'outline',
+                                        'square-fill-icon': row?.properties?.shape === 'square' && row.properties?.background === 'fill',
+                                        'square-outline-icon': row?.properties?.shape === 'square' && row.properties?.background === 'outline',
+                                        }">
                 @if (action.source === 'fontawesome') {
                 <i [ngStyle]="{'color': action?.color, 'cursor':'pointer'}" [class]="action?.name"></i>
                 } @else if (action.source === 'material') {
@@ -202,12 +206,12 @@
               }
               @else {
               <div [ngClass]="subItem.class" [ngClass]="{
-              'fw-bold': subItem.style?.fontStyle === 'bold',
-              'text-secondary' : subItem.style?.fontStyle === 'muted',
-              'text-start' : subItem.style?.align === 'start',
-              'text-center' : subItem.style?.align === 'center',
-              'text-end' : subItem.style?.align === 'end'
-              }">{{ data[subItem.key] }}</div>
+                                      'fw-bold': subItem.style?.fontStyle === 'bold',
+                                      'text-secondary' : subItem.style?.fontStyle === 'muted',
+                                      'text-start' : subItem.style?.align === 'start',
+                                      'text-center' : subItem.style?.align === 'center',
+                                      'text-end' : subItem.style?.align === 'end'
+                                      }">{{ data[subItem.key] }}</div>
               }
               }
             </div>
@@ -215,6 +219,13 @@
           }
           }
           }
+        </tr>
+        }
+        }@else{
+        <tr>
+          <td colspan="10" class="text-center p-5 text-secondary">
+            No data available
+          </td>
         </tr>
         }
       </tbody>
