@@ -15,12 +15,10 @@ export interface ColumnStyle {
   align?: 'start' | 'center' | 'end';
   width?: string;
 }
-
 export interface ColumnProperties {
   shape?: 'circle' | 'square' | 'rectangle' | 'oval' | 'flat' | 'default';
   background?: 'fill' | 'outline';
 }
-
 export interface ColumnItem {
   type: string;
   key?: string;
@@ -32,13 +30,11 @@ export interface ColumnItem {
   gap?: number;
   items?: ColumnItem[];
 }
-
 export interface ColumnMeta {
   layout: 'horizontal' | 'vertical';
   gap?: number;
   items: ColumnItem[];
 }
-
 export interface TableColumn {
   key: string;
   header: string;
@@ -49,5 +45,3 @@ export interface TableColumn {
   meta?: ColumnMeta;
   properties?: ColumnProperties;
 }
-
-
