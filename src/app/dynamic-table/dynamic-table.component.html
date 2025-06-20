@@ -1,0 +1,223 @@
+<div class="container py-5">
+  <!-- search box -->
+  <div class="input-group mb-3">
+    <span class="input-group-text" id="basic-addon1">
+      <i class="bi bi-search text-secondary"></i>
+    </span>
+    <input type="text" class="form-control search-control" placeholder="Search.." [formControl]="searchControl">
+    <span class="input-group-text clear-btn" id="basic-addon1">
+      @if (searchControl.value && searchControl.value?.length !== 0) {
+      <i class="bi bi-x-lg text-secondary pointer" (click)="searchControl.reset()"></i>
+      }
+    </span>
+  </div>
+  <!-- table -->
+  <div class="table-responsive shadow-sm rounded-3 overflow-auto noselect">
+    <table class="table align-middle mb-0" [class.table-hover]="tableProperties .hovered" [ngClass]="getTableStyle(tableProperties.tableStyle)">
+      <thead class="text-white">
+        <tr class="table-active">
+          @for (row of columns; track $index) {
+          <th (click)="row.sort ? sortData(row.key) : null" class="p-3"
+            [ngStyle]="{ cursor: row.sort ? 'pointer' : 'default' }">
+            {{ row.header }}
+            @if (row.sort && sortColumn === row.key) {
+            <i class="sort-icon" [class]="sortDirection === 'asc'
+              ? 'fa-solid fa-arrow-up text-secondary'
+              : 'fa-solid fa-arrow-down text-secondary'">
+            </i>
+            }
+          </th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (data of tableData; track data; let i = $index) {
+        <tr class="bg-white border-bottom">
+          @for (row of columns; track $index) {
+          @switch (row.type) {
+          @case ('badge') {
+          <td class="p-3" [ngClass]="{
+            'fw-bold': row.style?.fontStyle === 'bold',
+            'text-secondary' : row.style?.fontStyle === 'muted',
+            'text-start' : row.style?.align === 'start',
+            'text-center' : row.style?.align === 'center',
+            'text-end' : row.style?.align === 'end'
+            }">
+            <span class="badge px-3 py-2" [ngClass]="{
+                'success-fill': data.status === 'Active' && row.properties?.background === 'fill',
+                'warning-fill': data.status === 'Pending' && row.properties?.background === 'fill',
+                'danger-fill': data.status === 'Inactive' && row.properties?.background === 'fill',
+                'success-outline': data.status === 'Active' && row.properties?.background === 'outline',
+                'warning-outline': data.status === 'Pending' && row.properties?.background === 'outline',
+                'danger-outline': data.status === 'Inactive' && row.properties?.background === 'outline',
+                'rounded-pill': row?.properties?.shape === 'oval',
+                }">
+              {{ data.status }}
+            </span>
+          </td>
+          }
+          @case ('text') {
+          <td class="p-3" [ngStyle]="{'width':row.style?.width || 'none'}" [ngClass]="{
+            'fw-bold': row.style?.fontStyle === 'bold',
+            'text-secondary' : row.style?.fontStyle === 'muted',
+            'text-start' : row.style?.align === 'start',
+            'text-center' : row.style?.align === 'center',
+            'text-end' : row.style?.align === 'end'
+            }">
+            {{ data[row.key] || '-' }}
+          </td>
+          }
+          @case ('number') {
+          <td class="p-3" [ngClass]="{
+            'fw-bold': row.style?.fontStyle === 'bold',
+            'text-secondary' : row.style?.fontStyle === 'muted',
+            'text-start' : row.style?.align === 'start',
+            'text-center' : row.style?.align === 'center',
+            'text-end' : row.style?.align === 'end'
+            }">{{ data[row.key] || 0}}</td>
+          }
+          @case ('date') {
+          <td class="p-3" [ngClass]="{
+            'fw-bold': row.style?.fontStyle === 'bold',
+            'text-secondary' : row.style?.fontStyle === 'muted',
+            'text-start' : row.style?.align === 'start',
+            'text-center' : row.style?.align === 'center',
+            'text-end' : row.style?.align === 'end'
+            }">{{ data[row.key] | date:'MMM dd, YYYY' }}</td>
+          }
+          @case ('amount') {
+          <td class="p-3" [ngClass]="{
+            'fw-bold': row.style?.fontStyle === 'bold',
+            'text-secondary' : row.style?.fontStyle === 'muted',
+            'text-start' : row.style?.align === 'start',
+            'text-center' : row.style?.align === 'center',
+            'text-end' : row.style?.align === 'end'
+            }">{{ data[row.key] | currency:'INR':'symbol':'1.2'}}</td>
+          }
+          @case('image') {
+          <td class="p-3" [ngClass]="{
+            'fw-bold': row.style?.fontStyle === 'bold',
+            'text-secondary' : row.style?.fontStyle === 'muted',
+            'text-start' : row.style?.align === 'start',
+            'text-center' : row.style?.align === 'center',
+            'text-end' : row.style?.align === 'end'
+            }">
+            <img [src]="data[row.key]" [ngClass]="{
+                  'rounded-circle': row.shape === 'circle',
+                  'rounded': row.shape === 'square'
+                }" width="40" height="40" />
+          </td>
+          }
+          @case('profile') {
+          <td>
+            <div class="p-3 d-flex align-items-center gap-2" [ngClass]="{
+              'fw-bold': row.style?.fontStyle === 'bold',
+              'text-secondary' : row.style?.fontStyle === 'muted',
+              'text-start' : row.style?.align === 'start',
+              'text-center' : row.style?.align === 'center',
+              'text-end' : row.style?.align === 'end'
+              }">
+              <img [src]="data.profilePic" class="rounded-circle" width="40" height="40" />
+              <span>{{ data[row.key] }}</span>
+            </div>
+          </td>
+          }
+          @case('link') {
+          <td class="p-3"><a [href]="data[row.key]" target="_blank">{{ data[row.key] }}</a></td>
+          }
+          @case('object') {
+          <td class="p-3">
+            <div>{{ findObjectByLabel(data, row.key) }}</div>
+          </td>
+          }
+          @case('progress') {
+          <td class="px-3">
+            @if (row.properties?.shape === 'flat'){
+            <div class="progress">
+              <div class="progress-bar" role="progressbar"
+                [ngStyle]="{'width':data[row.key]+'%', 'background-color': row.properties?.background}">
+              </div>
+            </div>
+            }
+            @if (row.properties?.shape === 'circle') {
+            <div class="position-relative d-inline-block" style="width: 40px; height: 40px;">
+              <svg class="position-absolute top-0 start-0" viewBox="0 0 36 36" style="width: 100%; height: 100%;">
+                <path class="text-light" d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor"
+                  stroke-width="3" />
+                <path class="text-primary" [attr.stroke-dasharray]="data[row.key] + ', 100'" d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831" fill="none"
+                  [attr.stroke]="row.properties?.background || 'currentColor'" stroke-width="3"
+                  stroke-linecap="round" />
+              </svg>
+              <div [ngStyle]="{'color': row.properties?.background}"
+                class="position-absolute top-50 start-50 translate-middle fw-semibold font-xs">
+                {{ data[row.key] }}%
+              </div>
+            </div>
+            }
+          </td>
+          }
+          @case('innerHtml') {
+          <td class="p-3" [innerHTML]="getSanitizedHtml(data[row.key])"></td>
+          }
+          @case('actions') {
+          <td class="p-3">
+            <div class="d-flex gap-2">
+              @for (action of actions; track $index) {
+              <div [ngClass]="{
+                'icon-container' : row?.properties?.shape !== 'default',
+                'rounded-fill-icon': row?.properties?.shape === 'circle' && row.properties?.background === 'fill',
+                'rounded-outline-icon': row?.properties?.shape === 'circle' && row.properties?.background === 'outline',
+                'square-fill-icon': row?.properties?.shape === 'square' && row.properties?.background === 'fill',
+                'square-outline-icon': row?.properties?.shape === 'square' && row.properties?.background === 'outline',
+                }">
+                @if (action.source === 'fontawesome') {
+                <i [ngStyle]="{'color': action?.color, 'cursor':'pointer'}" [class]="action?.name"></i>
+                } @else if (action.source === 'material') {
+                <span [ngStyle]="{'color': action?.color, 'cursor':'pointer'}" class="material-symbols-outlined">
+                  {{action?.name}}
+                </span>
+                }
+              </div>
+              }
+            </div>
+          </td>
+          }
+          @case ('custom') {
+          <td class="p-3">
+            <ng-template [ngTemplateOutlet]="renderItem" [ngTemplateOutletContext]="{ row: row.meta, data: data }" />
+          </td>
+          <ng-template #renderItem let-row="row" let-data="data">
+            <div [ngClass]="getLayoutClass(row?.layout)">
+              @for (subItem of row?.items; track $index) {
+              @if (subItem.type === 'image') {
+              <img class="rounded-circle" width="40" height="40" [src]="data[subItem.key]"
+                [ngClass]="getImageClass(subItem)" alt="avatar" />
+              }
+              @else if (subItem.type === 'group') {
+              <ng-template [ngTemplateOutlet]="renderItem" [ngTemplateOutletContext]="{ row: subItem, data: data }" />
+              }
+              @else {
+              <div [ngClass]="subItem.class" [ngClass]="{
+              'fw-bold': subItem.style?.fontStyle === 'bold',
+              'text-secondary' : subItem.style?.fontStyle === 'muted',
+              'text-start' : subItem.style?.align === 'start',
+              'text-center' : subItem.style?.align === 'center',
+              'text-end' : subItem.style?.align === 'end'
+              }">{{ data[subItem.key] }}</div>
+              }
+              }
+            </div>
+          </ng-template>
+          }
+          }
+          }
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
